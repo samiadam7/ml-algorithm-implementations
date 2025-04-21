@@ -51,3 +51,18 @@ class UnivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
 class MultivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
     def __init__(self):
         super().__init__()
+        
+if __name__ == "__main__":
+    qda = UnivariateQDA()
+    X = np.array([1, 2, 3, 4, 5, 6])
+    y = np.array([1, 1, 1, 0, 0, 0])
+    qda.fit(X, y)
+    print("Test 1 (Basic):", qda.predict(X))
+
+    print("Test 2 (Single point):", qda.predict(np.array([2.5])))
+
+    X2 = np.array([1, 1.1, 5, 5.1, 5.2, 10])
+    y2 = np.array([0, 0, 1, 1, 1, 0])  # Class 1 has smaller variance
+    qda2 = UnivariateQDA()
+    qda2.fit(X2, y2)
+    print("Test 3 (Different variances):", qda2.predict(X2))
