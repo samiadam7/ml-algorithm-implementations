@@ -6,7 +6,7 @@ class UnivariateLDA(BaseEstimator, BaseModel):
         super().__init__()
         
     def fit(self, X, y):
-        self.is_fitted = True
+        self._is_fitted = True
         
         X = np.asarray(X)
         y = np.asarray(y)
@@ -52,7 +52,7 @@ class MulitvariateLDA(BaseEstimator, BaseModel, TransformerMixin):
         super().__init__()
         
     def fit(self, X, y):
-        self.is_fitted = True
+        self._is_fitted = True
         
         X = np.asarray(X)
         y = np.asarray(y)
