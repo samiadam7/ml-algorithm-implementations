@@ -28,7 +28,7 @@ class BaseEstimator:
     
 class BaseModel:
     def __init__(self):
-        self.is_fitted = False
+        self._is_fitted = False
     
     def fit(self, X, y):
         raise NotImplementedError("fit() must be implemented.")
@@ -37,7 +37,7 @@ class BaseModel:
         raise NotImplementedError("predict() must be implemented.")
     
     def _check_is_fitted(self):
-        if not self.is_fitted:
+        if not self._is_fitted:
             raise ValueError("Model instance has not been fit. Please call fit().")
         
 class TransformerMixin:
