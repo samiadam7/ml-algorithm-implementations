@@ -30,6 +30,7 @@ class UnivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
             self.vars[i] = X_k.var()
             self.priors[i] = len(X_k) / len(X)
             
+        return self
         
     def predict(self, X):
         self._check_is_fitted()
@@ -89,6 +90,8 @@ class MultivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
         class_counts = np.array([len(X[y == k]) for k in self.classes])
         priors = class_counts / X.shape[0]
         self.priors_ = priors
+        
+        return self
 
     def predict(self, X):
         self._check_is_fitted()
