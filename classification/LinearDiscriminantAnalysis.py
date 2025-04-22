@@ -37,6 +37,8 @@ class UnivariateLDA(BaseEstimator, BaseModel):
                     best_error = error
                     self.threshold = x_thresh
                     self.label_right = y_
+        
+        return self
     
     def predict(self, X):
         if X.ndim != 1:
@@ -115,6 +117,8 @@ class MulitvariateLDA(BaseEstimator, BaseModel, TransformerMixin):
         top_evecs = evecs[:,: K -1]
         
         self.W_ = top_evecs
+        
+        return self
 
     def transform(self, X):
         self._check_is_fitted()
