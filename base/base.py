@@ -47,5 +47,5 @@ class TransformerMixin:
                 f"{self.__class__.__name__} does not implement transform()."
                 "fit_transform() requires transform to be defined."
             )
-        self.fit(X, y)
+        self.fit(X)
         return self.transform(X)
