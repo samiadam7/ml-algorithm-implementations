@@ -58,7 +58,7 @@ class MulitvariateLDA(BaseEstimator, BaseModel, TransformerMixin):
         y = np.asarray(y)
         
         if X.ndim != 2:
-            raise ValueError("X must be 2-dimensional for univariate LDA.")
+            raise ValueError("X must be 2-dimensional for Multivariate LDA.")
         
         if X.shape[0] != y.shape[0]:
             raise ValueError("X and y arrays must be same length")
