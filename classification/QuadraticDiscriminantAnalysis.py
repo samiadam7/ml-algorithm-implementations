@@ -51,7 +51,44 @@ class UnivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
 class MultivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
     def __init__(self):
         super().__init__()
+    
+    def fit(self, X, y):
+        self._is_fitted = True
         
+        X = np.asarray(X)
+        y = np.asarray(y)
+        
+        if X.ndim != 2:
+            raise ValueError("X must be 2-dimensional for Multivariate QDA")
+        
+        if X.shape[0] != y.shape[0]:
+            raise ValueError(f"X ({X.shape[0]}) and y ({y.shape[0]}) must be the same length")
+        
+        n_samples, n_features = X.shape
+        self.classes = np.unique(y)
+        n_classes = len(self.classes)
+        
+        means = np.zeros((n_classes, n_features))
+        covs = np.zeros((n_classes, n_features, n_features))
+        
+        for i, k in enumerate(self.classes):
+            X_k = X[y == k]
+            mean_k = np.mean(X_k, axis= 0)
+            
+            centered = X_k - mean_k
+            cov_k = (centered.T @ centered) / len(X_k)
+            cov_k += np.eye(n_features) * 1e-6
+            
+            means[i] = mean_k
+            covs[i] = cov_k
+            
+        self.class_means_ = means
+        self.covariances_ = covs
+        
+        class_counts = np.array([len(X[y == k]) for k in self.classes])
+        priors = class_counts / X.shape[0]
+        self.priors_ = priors
+
 if __name__ == "__main__":
     qda = UnivariateQDA()
     X = np.array([1, 2, 3, 4, 5, 6])
