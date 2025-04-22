@@ -41,8 +41,8 @@ class UnivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
         probs = np.zeros((len(X), len(self.classes)))
         
         for i, k in enumerate(self.classes):
-            probs[:, i] = (-(1/2) * np.log(2 * np.pi * self.vars[i]  ** 2) - 
-                        ((X - self.means[i])**2 / (2 * self.vars[i] ** 2)) + np.log(self.priors[i]))
+            probs[:, i] = (-(1/2) * np.log(2 * np.pi * self.vars[i]) - 
+                        ((X - self.means[i])**2 / (2 * self.vars[i])) + np.log(self.priors[i]))
             
         return self.classes[np.argmax(probs, axis= 1)]
             
