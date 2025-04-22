@@ -67,10 +67,18 @@ class MulitvariateLDA(BaseEstimator, BaseModel, TransformerMixin):
         self.classes = np.unique(y)
         
         means = np.zeros((len(self.classes), n_features))
+        pooled_cov = np.zeros((n_features, n_features))
+        
         for i, k in enumerate(self.classes):
             X_k = X[y == k]
-            means[i] = X_k.mean(axis= 0)
-        
+            mean_k = X_k.mean(axis= 0)
+            
+            centered = X_k - mean_k
+            pooled_cov += centered.T @ centered
+
+            means[i] = mean_k
+            
+        self.pooled_cov_ = pooled_cov / X.shape[0]
         self.class_means_ = means
         self.global_mean_ = X.mean(axis= 0)
         self.class_to_index_ = {label: idx for idx, label in enumerate(self.classes)}
@@ -78,17 +86,6 @@ class MulitvariateLDA(BaseEstimator, BaseModel, TransformerMixin):
         class_counts = np.array([len(X[y == k]) for k in self.classes])
         priors = class_counts / X.shape[0]
         self.priors_ = priors
-        
-        pooled_cov = np.zeros((n_features, n_features))
-        
-        for i, k in enumerate(self.classes):
-            X_k = X[y == k]
-            mean_k = self.class_means_[i]
-            centered = X_k - mean_k
-            
-            pooled_cov += centered.T @ centered
-            
-        self.pooled_cov_ = pooled_cov / X.shape[0]
         
         evals_cov, evecs_cov = np.linalg.eigh(self.pooled_cov_)
         evals_cov = np.maximum(evals_cov, 1e-10)
