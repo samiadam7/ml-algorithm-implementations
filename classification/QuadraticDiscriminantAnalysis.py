@@ -114,16 +114,57 @@ class MultivariateQDA(BaseEstimator, BaseModel, TransformerMixin):
         return self.classes[np.argmax(probs, axis= 1)]
         
 if __name__ == "__main__":
-    qda = UnivariateQDA()
-    X = np.array([1, 2, 3, 4, 5, 6])
-    y = np.array([1, 1, 1, 0, 0, 0])
-    qda.fit(X, y)
-    print("Test 1 (Basic):", qda.predict(X))
+    print("=== UnivariateQDA Tests ===")
+    
+    # Test 1: Basic binary classification
+    print("\nTest 1: Basic binary classification")
+    uni_qda = UnivariateQDA()
+    X1 = np.array([1, 2, 3, 4, 5, 6])
+    y1 = np.array([1, 1, 1, 0, 0, 0])
+    uni_qda.fit(X1, y1)
+    print("Training predictions:", uni_qda.predict(X1))
+    print("Single point prediction:", uni_qda.predict(np.array([2.5])))
 
-    print("Test 2 (Single point):", qda.predict(np.array([2.5])))
-
+    # Test 2: Classes with different variances
+    print("\nTest 2: Different variances")
     X2 = np.array([1, 1.1, 5, 5.1, 5.2, 10])
     y2 = np.array([0, 0, 1, 1, 1, 0])  # Class 1 has smaller variance
-    qda2 = UnivariateQDA()
-    qda2.fit(X2, y2)
-    print("Test 3 (Different variances):", qda2.predict(X2))
+    uni_qda.fit(X2, y2)
+    print("Training predictions:", uni_qda.predict(X2))
+    
+    print("\n=== MultivariateQDA Tests ===")
+    
+    # Test 1: Simple 2D binary classification
+    print("\nTest 1: Simple 2D binary classification")
+    multi_qda = MultivariateQDA()
+    X1 = np.array([[1, 2], [2, 3], [3, 4],    # class 0
+                   [6, 7], [7, 8], [8, 9]])    # class 1
+    y1 = np.array([0, 0, 0, 1, 1, 1])
+    multi_qda.fit(X1, y1)
+    print("Training predictions:", multi_qda.predict(X1))
+    print("New points prediction:", multi_qda.predict(np.array([[2, 3], [7, 8]])))
+    
+    # Test 2: Three classes with different covariances
+    print("\nTest 2: Three classes with different covariances")
+    X2 = np.array([[0, 0], [1, 0], [0, 1],     # tight cluster (class 0)
+                   [5, 5], [7, 5], [5, 7],      # spread out cluster (class 1)
+                   [2, 4], [3, 4], [2.5, 3]])   # medium cluster (class 2)
+    y2 = np.array([0, 0, 0, 1, 1, 1, 2, 2, 2])
+    multi_qda.fit(X2, y2)
+    print("Training predictions:", multi_qda.predict(X2))
+    print("New points prediction:", 
+          multi_qda.predict(np.array([[0.5, 0.5],  # should be class 0
+                                    [6, 6],        # should be class 1
+                                    [2.5, 3.5]]))) # should be class 2
+    
+    # Test 3: Unbalanced classes
+    print("\nTest 3: Unbalanced classes")
+    X3 = np.array([[1, 1], [1.1, 1], [0.9, 1],     # many class 0
+                   [1.2, 0.8], [0.8, 1.2], [1, 0.9],
+                   [5, 5], [5.1, 5.1]])             # few class 1
+    y3 = np.array([0, 0, 0, 0, 0, 0, 1, 1])
+    multi_qda.fit(X3, y3)
+    print("Training predictions:", multi_qda.predict(X3))
+    print("New points prediction:", 
+          multi_qda.predict(np.array([[1, 1],   # should be class 0
+                                    [5, 5]])))  # should be class 1
